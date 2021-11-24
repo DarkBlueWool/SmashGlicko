@@ -37,7 +37,7 @@ public:
     unsigned int* Player2;
     //Player 1 winning games / total games
     float* Score;
-    //mtchCount is the TOTAL number of Sets played, EventID is the id of the Event - use negative ids for an event with no smash.gg ID (custom / concated events) (see enum in EventList)
+    //mtchCount is the TOTAL number of Sets played, EventID is the id of the Event - use 0 for an event with no smash.gg ID (custom / concated events)
     Event(unsigned int mtchCount, int EventID) {
         id = EventID;
         MtchCount = mtchCount;
@@ -46,9 +46,10 @@ public:
         Score = new float[MtchCount];
     }
     ~Event() {
-        delete Player1;
-        delete Player2;
-        delete Score;
+        //This may need to be fixed, but for now it stays commented since it breaks otherwise :(
+        //delete Player1;
+        //delete Player2;
+        //delete Score;
     }
 };
 //Calculations based on Glicko Documentation
@@ -202,6 +203,9 @@ public:
     PlayerList(std::string name) {
         Name = name;
     }
+    PlayerList() {
+        Name = "";
+    }
 
     void AddPlayer(Player Plyr) {
         PlayerDict.insert(std::pair<unsigned int, Player>(Plyr.id, Plyr));
@@ -227,11 +231,12 @@ public:
     std::string Name;
     std::map<unsigned int, Event> EventDict;
 
-    static enum CustomIDs { ConcatedEvent = -1 };
-
-    //Name can be "" and nothing will break - it's just useful for debugging purposes
+    //Name can be empty and nothing will break - it's just useful for debugging purposes
     EventList(std::string name) {
         Name = name;
+    }
+    EventList() {
+        Name = "";
     }
 
     void CopyList(EventList Input) {
@@ -240,6 +245,14 @@ public:
             EventDict.insert(std::pair<unsigned int, Event>(it->first, it->second));
         }
     }
+
+    //Returns true if the event was added, false if it already existed
+    bool AddEvent(Event Ev) {
+        std::pair<std::map<unsigned int, Event>::iterator, bool> ret;
+        ret = EventDict.insert(std::pair<unsigned int, Event>(Ev.id, Ev));
+        return ret.second;
+    }
+
     //Concates all events into one - mainly to be able to be processed by the Glicko-2 Implementation side of the code
     Event concate() {
         unsigned int TotalSets = 0;
@@ -248,7 +261,7 @@ public:
             TotalSets += it->second.MtchCount;
         }
 
-        Event Output = Event(TotalSets, CustomIDs::ConcatedEvent);
+        Event Output = Event(TotalSets, 0);
         unsigned int i = 0;
 
         for (std::map<unsigned int, Event>::iterator it = EventDict.begin(); it != EventDict.end(); ++it) {
@@ -268,13 +281,21 @@ class TimeScale {
 public:
     //The number of the timescale period
     unsigned int TimeScaleNum;
-    //The events contained within the timescale
-    unsigned int EventCount;
     //The Players at the start of the timescale
-    PlayerList Players;
+    PlayerList Players = PlayerList("");
     //The events within the timescale
     EventList Events;
 
+    TimeScale(unsigned int TimeScaleNumber, PlayerList Plyrs) {
+        Players = Plyrs;
+        TimeScaleNum = TimeScaleNumber;
+        Events = EventList("");
+    }
+    
+    //Adds an event to the events 
+    bool AddEvent(Event Ev) {
+        return Events.AddEvent(Ev);
+    }
 };
 //testing stuff
 //This is currently all untested and I know it's gonna suck debuggin this over hundred line brick of math :(
@@ -287,39 +308,76 @@ int main()
         Players[i].id = i;
     }
 
+    EventList TestList = EventList();
+
+    int randIntensity = 4;
+
     //Set up fake tourney results ( bigger number better player ;) )
-    Event TestTourney = Event(plyrcount * plyrcount - plyrcount, 0);
+    Event TestTourney1 = Event(plyrcount * plyrcount - plyrcount, 0);
     unsigned int counter = 0;
     for (unsigned int i = 0; i < plyrcount; i++) {
         for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
             if (i != i2) {
-                TestTourney.Player1[counter] = i;
-                TestTourney.Player2[counter] = i2;
-                if (i > i2) {
-                    TestTourney.Score[counter] = 1;
+                TestTourney1.Player1[counter] = i;
+                TestTourney1.Player2[counter] = i2;
+                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+                    TestTourney1.Score[counter] = 1;
                 } else {
-                    TestTourney.Score[counter] = 0;
+                    TestTourney1.Score[counter] = 0;
                 }
                 counter++;
             }
         }
     }
+
+    //Set up fake tourney results ( bigger number better player ;) )
+    Event TestTourney2 = Event(plyrcount * plyrcount - plyrcount, 1);
+    counter = 0;
     for (unsigned int i = 0; i < plyrcount; i++) {
-        NewPlayers[i] = GlickoShit::CalcNewInfo(&Players[i], TestTourney, Players);
+        for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
+            if (i != i2) {
+                TestTourney2.Player1[counter] = i;
+                TestTourney2.Player2[counter] = i2;
+                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+                    TestTourney2.Score[counter] = 1;
+                }
+                else {
+                    TestTourney2.Score[counter] = 0;
+                }
+                counter++;
+            }
+        }
+    }
+
+    //Set up fake tourney results ( bigger number better player ;) )
+    Event TestTourney3 = Event(plyrcount * plyrcount - plyrcount, 2);
+    counter = 0;
+    for (unsigned int i = 0; i < plyrcount; i++) {
+        for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
+            if (i != i2) {
+                TestTourney3.Player1[counter] = i;
+                TestTourney3.Player2[counter] = i2;
+                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+                    TestTourney3.Score[counter] = 1;
+                }
+                else {
+                    TestTourney3.Score[counter] = 0;
+                }
+                counter++;
+            }
+        }
+    }
+
+    TestList.AddEvent(TestTourney1);
+    TestList.AddEvent(TestTourney2);
+    TestList.AddEvent(TestTourney3);
+
+    Event CombinedEvent = TestList.concate();
+
+    for (unsigned int i = 0; i < plyrcount; i++) {
+        NewPlayers[i] = GlickoShit::CalcNewInfo(&Players[i], CombinedEvent, Players);
         printf("Player %u | R = %.2f | D = %.3f | V = %.2f\n", i, NewPlayers[i].rating, NewPlayers[i].deviation, NewPlayers[i].volatility);
     }
-    printf("MatchCount = %u : %u\n", TestTourney.MtchCount, counter);
-
-    PlayerList Listy = PlayerList("Listy");
-    Listy.AddPlayer(NewPlayers[0]);
-    Listy.AddPlayer(NewPlayers[1]);
-    Listy.AddPlayer(NewPlayers[2]);
-    Listy.AddPlayer(NewPlayers[3]);
-    Listy.AddPlayer(NewPlayers[4]);
-    PlayerList Copier = PlayerList("Copier");
-    Copier.CopyList(Listy);
-    Listy.PrintList();
-    Copier.PrintList();
     return 0;
 }
 
