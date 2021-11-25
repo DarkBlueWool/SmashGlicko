@@ -338,8 +338,15 @@ int main()
 {
     unsigned int plyrcount = 30;
     TimeScale TS = TimeScale(0);
+    unsigned int randomNum;
     for (unsigned int i = 0; i < plyrcount; i++) {
-        TS.Players.AddNewPlayer(1 + rand() % 100);
+        randomNum = rand() % 100;
+        if (TS.Players.PlayerDict.find(randomNum) == TS.Players.PlayerDict.end()) {
+            TS.Players.AddNewPlayer(randomNum);
+        }
+        else {
+            i--;
+        }
     }
 
     int randIntensity = 20;
