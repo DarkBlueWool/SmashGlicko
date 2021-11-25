@@ -61,6 +61,94 @@ public:
     }
 };
 
+//A list of Player Classes
+class PlayerList {
+public:
+    std::string Name;
+    std::map<unsigned int, Player> PlayerDict;
+
+    PlayerList(std::string name) {
+        Name = name;
+    }
+    PlayerList() {
+        Name = "";
+    }
+
+    void AddPlayer(Player Plyr) {
+        PlayerDict.insert(std::pair<unsigned int, Player>(Plyr.id, Plyr));
+    }
+
+    void AddNewPlayer(unsigned int PlayerID) {
+        PlayerDict.insert(std::pair<unsigned int, Player>(PlayerID, Player(PlayerID)));
+    }
+
+    void CopyList(PlayerList Input) {
+        //Loops through the content of Input
+        for (std::map<unsigned int, Player>::iterator it = Input.PlayerDict.begin(); it != Input.PlayerDict.end(); ++it) {
+            PlayerDict.insert(std::pair<unsigned int, Player>(it->first, it->second));
+        }
+    }
+    void PrintList() {
+        std::string output = "\n--------------- Printing PlayerList " + Name + " ---------------";
+        //Loops through the content of Dictionary 
+        for (std::map<unsigned int, Player>::iterator it = PlayerDict.begin(); it != PlayerDict.end(); ++it) {
+            output += it->second.PrintableFormat();
+        }
+        printf(output.c_str());
+    };
+};
+
+class EventList {
+public:
+    std::string Name;
+    std::map<unsigned int, Event> EventDict;
+
+    //Name can be empty and nothing will break - it's just useful for debugging purposes
+    EventList(std::string name) {
+        Name = name;
+    }
+    EventList() {
+        Name = "";
+    }
+
+    void CopyList(EventList Input) {
+        //Loops through the content of Input
+        for (std::map<unsigned int, Event>::iterator it = Input.EventDict.begin(); it != Input.EventDict.end(); ++it) {
+            EventDict.insert(std::pair<unsigned int, Event>(it->first, it->second));
+        }
+    }
+
+    //Returns true if the event was added, false if it already existed
+    bool AddEvent(Event Ev) {
+        std::pair<std::map<unsigned int, Event>::iterator, bool> ret;
+        ret = EventDict.insert(std::pair<unsigned int, Event>(Ev.id, Ev));
+        return ret.second;
+    }
+
+    //Concates all events into one - mainly to be able to be processed by the Glicko-2 Implementation side of the code
+    Event concate() {
+        unsigned int TotalSets = 0;
+        //Loops through the Events, adding the match count of each to the total match count
+        for (std::map<unsigned int, Event>::iterator it = EventDict.begin(); it != EventDict.end(); ++it) {
+            TotalSets += it->second.MtchCount;
+        }
+
+        Event Output = Event(TotalSets, 0);
+        unsigned int i = 0;
+
+        for (std::map<unsigned int, Event>::iterator it = EventDict.begin(); it != EventDict.end(); ++it) {
+            for (unsigned int i2 = 0; i2 < it->second.MtchCount; i2++) {
+                Output.Player1[i] = it->second.Player1[i2];
+                Output.Player2[i] = it->second.Player2[i2];
+                Output.Score[i] = it->second.Score[i2];
+                i++;
+            }
+        }
+
+        return Output;
+    }
+};
+
 //Calculations based on Glicko Documentation
 //http://www.glicko.net/glicko/glicko2.pdf
 class GlickoShit {
@@ -203,94 +291,6 @@ public :
     }
 };
 
-//A list of Player Classes
-class PlayerList {
-public:
-    std::string Name;
-    std::map<unsigned int, Player> PlayerDict;
-
-    PlayerList(std::string name) {
-        Name = name;
-    }
-    PlayerList() {
-        Name = "";
-    }
-
-    void AddPlayer(Player Plyr) {
-        PlayerDict.insert(std::pair<unsigned int, Player>(Plyr.id, Plyr));
-    }
-
-    void AddNewPlayer(unsigned int PlayerID) {
-        PlayerDict.insert(std::pair<unsigned int, Player>(PlayerID, Player(PlayerID)));
-    }
-
-    void CopyList(PlayerList Input) {
-        //Loops through the content of Input
-        for (std::map<unsigned int, Player>::iterator it = Input.PlayerDict.begin(); it != Input.PlayerDict.end(); ++it) {
-            PlayerDict.insert(std::pair<unsigned int, Player>(it->first, it->second));
-        }
-    }
-    void PrintList() {
-        std::string output = "\n--------------- Printing PlayerList " + Name + " ---------------";
-        //Loops through the content of Dictionary 
-        for (std::map<unsigned int, Player>::iterator it = PlayerDict.begin(); it != PlayerDict.end(); ++it) {
-            output += it->second.PrintableFormat();
-        }
-        printf(output.c_str());
-    };
-};
-
-class EventList {
-public:
-    std::string Name;
-    std::map<unsigned int, Event> EventDict;
-
-    //Name can be empty and nothing will break - it's just useful for debugging purposes
-    EventList(std::string name) {
-        Name = name;
-    }
-    EventList() {
-        Name = "";
-    }
-
-    void CopyList(EventList Input) {
-        //Loops through the content of Input
-        for (std::map<unsigned int, Event>::iterator it = Input.EventDict.begin(); it != Input.EventDict.end(); ++it) {
-            EventDict.insert(std::pair<unsigned int, Event>(it->first, it->second));
-        }
-    }
-
-    //Returns true if the event was added, false if it already existed
-    bool AddEvent(Event Ev) {
-        std::pair<std::map<unsigned int, Event>::iterator, bool> ret;
-        ret = EventDict.insert(std::pair<unsigned int, Event>(Ev.id, Ev));
-        return ret.second;
-    }
-
-    //Concates all events into one - mainly to be able to be processed by the Glicko-2 Implementation side of the code
-    Event concate() {
-        unsigned int TotalSets = 0;
-        //Loops through the Events, adding the match count of each to the total match count
-        for (std::map<unsigned int, Event>::iterator it = EventDict.begin(); it != EventDict.end(); ++it) {
-            TotalSets += it->second.MtchCount;
-        }
-
-        Event Output = Event(TotalSets, 0);
-        unsigned int i = 0;
-
-        for (std::map<unsigned int, Event>::iterator it = EventDict.begin(); it != EventDict.end(); ++it) {
-            for (unsigned int i2 = 0; i2 < it->second.MtchCount; i2++) {
-                Output.Player1[i] = it->second.Player1[i2];
-                Output.Player2[i] = it->second.Player2[i2];
-                Output.Score[i] = it->second.Score[i2];
-                i++;
-            }
-        }
-
-        return Output;
-    }
-};
-
 class TimeScale {
 public:
     //The number of the timescale period
@@ -305,7 +305,7 @@ public:
         Output.CopyList(Players);
         Event TheBigEvent = Events.concate();
         for (std::map<unsigned int, Player>::iterator it = Players.PlayerDict.begin(); it != Players.PlayerDict.end(); ++it) {
-            it->second = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
+            Output.PlayerDict[it->first] = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
         }
         return Output;
     }
