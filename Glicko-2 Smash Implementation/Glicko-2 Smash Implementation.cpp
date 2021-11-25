@@ -341,7 +341,7 @@ int main()
         TS.Players.AddNewPlayer(i);
     }
 
-    int randIntensity = 4;
+    int randIntensity = 10;
 
     //Set up fake tourney results ( bigger number better player ;) )
     Event TestTourney1 = Event(plyrcount * plyrcount - plyrcount, 0);
