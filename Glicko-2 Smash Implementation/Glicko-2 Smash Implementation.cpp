@@ -287,10 +287,6 @@ public:
     //The events within the timescale
     EventList Events = EventList();
 
-    TimeScale() {
-
-    }
-
     PlayerList GenerateNewRatings() {
         PlayerList Output = PlayerList("New PlayerList");
         Output.CopyList(Players);
@@ -304,9 +300,12 @@ public:
     TimeScale(unsigned int TimeScaleNumber, PlayerList Plyrs) {
         Players = Plyrs;
         TimeScaleNum = TimeScaleNumber;
-        Events = EventList("");
     }
     
+    TimeScale(unsigned int TimeScaleNumber) {
+        TimeScaleNum = TimeScaleNumber;
+    }
+
     //Adds an event to the events 
     bool AddEvent(Event Ev) {
         return Events.AddEvent(Ev);
