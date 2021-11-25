@@ -52,6 +52,7 @@ public:
         //delete Score;
     }
 };
+
 //Calculations based on Glicko Documentation
 //http://www.glicko.net/glicko/glicko2.pdf
 class GlickoShit {
@@ -136,7 +137,7 @@ public :
         return NewVol;
     }
 
-    static Player CalcNewInfo(Player *Plyr, Event Tourney, Player* Players) {
+    static Player CalcNewInfo(Player *Plyr, Event Tourney, PlayerList Players) {
         Player Output = Player();
         Output.id = Plyr->id;
 
@@ -156,14 +157,14 @@ public :
         unsigned int counter = 0;
         for (unsigned int i = 0; i < Tourney.MtchCount; i++) {
             if (Tourney.Player1[i] == Plyr->id) {
-                ORat[counter] = Players[Tourney.Player2[i]].rating;
-                ODev[counter] = Players[Tourney.Player2[i]].deviation;
+                ORat[counter] = Players.PlayerDict[Tourney.Player2[i]].rating;
+                ODev[counter] = Players.PlayerDict[Tourney.Player2[i]].deviation;
                 Scores[counter] = Tourney.Score[i];
                 counter++;
             }
             else if (Tourney.Player2[i] == Plyr->id) {
-                ORat[counter] = Players[Tourney.Player1[i]].rating;
-                ODev[counter] = Players[Tourney.Player1[i]].deviation;
+                ORat[counter] = Players.PlayerDict[Tourney.Player1[i]].rating;
+                ODev[counter] = Players.PlayerDict[Tourney.Player1[i]].deviation;
                 Scores[counter] = 1 - Tourney.Score[i];
                 counter++;
             }
@@ -282,9 +283,23 @@ public:
     //The number of the timescale period
     unsigned int TimeScaleNum;
     //The Players at the start of the timescale
-    PlayerList Players = PlayerList("");
+    PlayerList Players = PlayerList();
     //The events within the timescale
-    EventList Events;
+    EventList Events = EventList();
+
+    TimeScale() {
+
+    }
+
+    PlayerList GenerateNewRatings() {
+        PlayerList Output = PlayerList("New PlayerList");
+        Output.CopyList(Players);
+        Event TheBigEvent = Events.concate();
+        for (std::map<unsigned int, Player>::iterator it = Players.PlayerDict.begin(); it != Players.PlayerDict.end(); ++it) {
+            Output.PlayerDict[it->second.id] = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
+        }
+        return Output;
+    }
 
     TimeScale(unsigned int TimeScaleNumber, PlayerList Plyrs) {
         Players = Plyrs;
@@ -297,8 +312,8 @@ public:
         return Events.AddEvent(Ev);
     }
 };
+
 //testing stuff
-//This is currently all untested and I know it's gonna suck debuggin this over hundred line brick of math :(
 int main()
 {
     unsigned int plyrcount = 30;
@@ -378,6 +393,7 @@ int main()
         NewPlayers[i] = GlickoShit::CalcNewInfo(&Players[i], CombinedEvent, Players);
         printf("Player %u | R = %.2f | D = %.3f | V = %.2f\n", i, NewPlayers[i].rating, NewPlayers[i].deviation, NewPlayers[i].volatility);
     }
+
     return 0;
 }
 
