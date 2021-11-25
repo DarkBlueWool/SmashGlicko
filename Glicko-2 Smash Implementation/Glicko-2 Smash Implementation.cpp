@@ -20,6 +20,14 @@ public:
         deviation = 350 / 173.7178;
         volatility = 0.06;
     }
+
+    Player(unsigned int ID) {
+        id = ID;
+        rating = 0;
+        deviation = 350 / 173.7178;
+        volatility = 0.06;
+    }
+
     std::string PrintableFormat() {
         std::string output = "\nPlayer : " + std::to_string(id);
         output += "\n   Rating : " + std::to_string(rating);
@@ -137,7 +145,7 @@ public :
         return NewVol;
     }
 
-    static Player CalcNewInfo(Player *Plyr, Event Tourney, PlayerList Players) {
+    static Player CalcNewInfo(Player *Plyr, Event Tourney, PlayerList PlyrLst) {
         Player Output = Player();
         Output.id = Plyr->id;
 
@@ -157,14 +165,14 @@ public :
         unsigned int counter = 0;
         for (unsigned int i = 0; i < Tourney.MtchCount; i++) {
             if (Tourney.Player1[i] == Plyr->id) {
-                ORat[counter] = Players.PlayerDict[Tourney.Player2[i]].rating;
-                ODev[counter] = Players.PlayerDict[Tourney.Player2[i]].deviation;
+                ORat[counter] = PlyrLst.PlayerDict[Tourney.Player2[i]].rating;
+                ODev[counter] = PlyrLst.PlayerDict[Tourney.Player2[i]].deviation;
                 Scores[counter] = Tourney.Score[i];
                 counter++;
             }
             else if (Tourney.Player2[i] == Plyr->id) {
-                ORat[counter] = Players.PlayerDict[Tourney.Player1[i]].rating;
-                ODev[counter] = Players.PlayerDict[Tourney.Player1[i]].deviation;
+                ORat[counter] = PlyrLst.PlayerDict[Tourney.Player1[i]].rating;
+                ODev[counter] = PlyrLst.PlayerDict[Tourney.Player1[i]].deviation;
                 Scores[counter] = 1 - Tourney.Score[i];
                 counter++;
             }
@@ -211,6 +219,11 @@ public:
     void AddPlayer(Player Plyr) {
         PlayerDict.insert(std::pair<unsigned int, Player>(Plyr.id, Plyr));
     }
+
+    void AddNewPlayer(unsigned int PlayerID) {
+        PlayerDict.insert(std::pair<unsigned int, Player>(PlayerID, Player(PlayerID)));
+    }
+
     void CopyList(PlayerList Input) {
         //Loops through the content of Input
         for (std::map<unsigned int, Player>::iterator it = Input.PlayerDict.begin(); it != Input.PlayerDict.end(); ++it) {
@@ -283,27 +296,34 @@ public:
     //The number of the timescale period
     unsigned int TimeScaleNum;
     //The Players at the start of the timescale
-    PlayerList Players = PlayerList();
+    PlayerList Players;
     //The events within the timescale
-    EventList Events = EventList();
+    EventList Events;
 
     PlayerList GenerateNewRatings() {
         PlayerList Output = PlayerList("New PlayerList");
         Output.CopyList(Players);
         Event TheBigEvent = Events.concate();
         for (std::map<unsigned int, Player>::iterator it = Players.PlayerDict.begin(); it != Players.PlayerDict.end(); ++it) {
-            Output.PlayerDict[it->second.id] = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
+            it->second = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
         }
         return Output;
     }
 
     TimeScale(unsigned int TimeScaleNumber, PlayerList Plyrs) {
         Players = Plyrs;
+        Events = EventList();
         TimeScaleNum = TimeScaleNumber;
     }
     
     TimeScale(unsigned int TimeScaleNumber) {
+        Players = PlayerList();
+        Events = EventList();
         TimeScaleNum = TimeScaleNumber;
+    }
+
+    TimeScale NextTimeScale() {
+        return TimeScale(TimeScaleNum + 1, GenerateNewRatings());
     }
 
     //Adds an event to the events 
@@ -316,13 +336,10 @@ public:
 int main()
 {
     unsigned int plyrcount = 30;
-    Player* Players = new Player[plyrcount];
-    Player* NewPlayers = new Player[plyrcount];
+    TimeScale TS = TimeScale(0);
     for (unsigned int i = 0; i < plyrcount; i++) {
-        Players[i].id = i;
+        TS.Players.AddNewPlayer(i);
     }
-
-    EventList TestList = EventList();
 
     int randIntensity = 4;
 
@@ -382,16 +399,13 @@ int main()
         }
     }
 
-    TestList.AddEvent(TestTourney1);
-    TestList.AddEvent(TestTourney2);
-    TestList.AddEvent(TestTourney3);
+    TS.Events.AddEvent(TestTourney1);
+    TS.Events.AddEvent(TestTourney2);
+    TS.Events.AddEvent(TestTourney3);
 
-    Event CombinedEvent = TestList.concate();
+    TimeScale TimeScaleAfter = TS.NextTimeScale();
 
-    for (unsigned int i = 0; i < plyrcount; i++) {
-        NewPlayers[i] = GlickoShit::CalcNewInfo(&Players[i], CombinedEvent, Players);
-        printf("Player %u | R = %.2f | D = %.3f | V = %.2f\n", i, NewPlayers[i].rating, NewPlayers[i].deviation, NewPlayers[i].volatility);
-    }
+    TimeScaleAfter.Players.PrintList();
 
     return 0;
 }
