@@ -306,6 +306,7 @@ public:
         Event TheBigEvent = Events.concate();
         for (std::map<unsigned int, Player>::iterator it = Players.PlayerDict.begin(); it != Players.PlayerDict.end(); ++it) {
             Output.PlayerDict[it->first] = GlickoShit::CalcNewInfo(&(it->second), TheBigEvent, Players);
+            printf("\n%u", it->first);
         }
         return Output;
     }
