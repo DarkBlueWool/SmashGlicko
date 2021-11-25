@@ -337,12 +337,17 @@ public:
 int main()
 {
     unsigned int plyrcount = 30;
+    unsigned int IDScale = 100;
     TimeScale TS = TimeScale(0);
+    unsigned int randomNum = rand() % IDScale;
     for (unsigned int i = 0; i < plyrcount; i++) {
-        TS.Players.AddNewPlayer(1 + rand() % 100);
+        while (TS.Players.PlayerDict.find(randomNum) != TS.Players.PlayerDict.end()) {
+            randomNum = rand() % IDScale;
+        }
+        TS.Players.AddNewPlayer(randomNum);
     }
 
-    int randIntensity = 20;
+    int randIntensity = 30;
 
     //Set up fake tourney results ( bigger number better player ;) )
     unsigned int counter = 0;
