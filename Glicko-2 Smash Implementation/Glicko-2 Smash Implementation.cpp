@@ -339,22 +339,23 @@ int main()
     unsigned int plyrcount = 30;
     TimeScale TS = TimeScale(0);
     for (unsigned int i = 0; i < plyrcount; i++) {
-        TS.Players.AddNewPlayer(i);
+        TS.Players.AddNewPlayer(rand() % 100);
     }
 
-    int randIntensity = 10;
+    int randIntensity = 20;
 
     //Set up fake tourney results ( bigger number better player ;) )
-    Event TestTourney1 = Event(plyrcount * plyrcount - plyrcount, 0);
     unsigned int counter = 0;
-    for (unsigned int i = 0; i < plyrcount; i++) {
-        for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
-            if (i != i2) {
-                TestTourney1.Player1[counter] = i;
-                TestTourney1.Player2[counter] = i2;
-                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+    Event TestTourney1 = Event(plyrcount * plyrcount - plyrcount, 0);
+    for (std::map<unsigned int, Player>::iterator it = TS.Players.PlayerDict.begin(); it != TS.Players.PlayerDict.end(); ++it) {
+        for (std::map<unsigned int, Player>::iterator it2 = TS.Players.PlayerDict.begin(); it2 != TS.Players.PlayerDict.end(); ++it2) {
+            if (it->first != it2->first) {
+                TestTourney1.Player1[counter] = it->first;
+                TestTourney1.Player2[counter] = it2->first;
+                if (it->first + (rand() % randIntensity) > it2->first + (rand() % randIntensity)) {
                     TestTourney1.Score[counter] = 1;
-                } else {
+                }
+                else {
                     TestTourney1.Score[counter] = 0;
                 }
                 counter++;
@@ -365,12 +366,12 @@ int main()
     //Set up fake tourney results ( bigger number better player ;) )
     Event TestTourney2 = Event(plyrcount * plyrcount - plyrcount, 1);
     counter = 0;
-    for (unsigned int i = 0; i < plyrcount; i++) {
-        for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
-            if (i != i2) {
-                TestTourney2.Player1[counter] = i;
-                TestTourney2.Player2[counter] = i2;
-                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+    for (std::map<unsigned int, Player>::iterator it = TS.Players.PlayerDict.begin(); it != TS.Players.PlayerDict.end(); ++it) {
+        for (std::map<unsigned int, Player>::iterator it2 = TS.Players.PlayerDict.begin(); it2 != TS.Players.PlayerDict.end(); ++it2) {
+            if (it->first != it2->first) {
+                TestTourney2.Player1[counter] = it->first;
+                TestTourney2.Player2[counter] = it2->first;
+                if (it->first + (rand() % randIntensity) > it2->first + (rand() % randIntensity)) {
                     TestTourney2.Score[counter] = 1;
                 }
                 else {
@@ -384,12 +385,12 @@ int main()
     //Set up fake tourney results ( bigger number better player ;) )
     Event TestTourney3 = Event(plyrcount * plyrcount - plyrcount, 2);
     counter = 0;
-    for (unsigned int i = 0; i < plyrcount; i++) {
-        for (unsigned int i2 = 0; i2 < plyrcount; i2++) {
-            if (i != i2) {
-                TestTourney3.Player1[counter] = i;
-                TestTourney3.Player2[counter] = i2;
-                if (i + (rand() % randIntensity) > i2 + (rand() % randIntensity)) {
+    for (std::map<unsigned int, Player>::iterator it = TS.Players.PlayerDict.begin(); it != TS.Players.PlayerDict.end(); ++it) {
+        for (std::map<unsigned int, Player>::iterator it2 = TS.Players.PlayerDict.begin(); it2 != TS.Players.PlayerDict.end(); ++it2) {
+            if (it->first != it2->first) {
+                TestTourney3.Player1[counter] = it->first;
+                TestTourney3.Player2[counter] = it2->first;
+                if (it->first + (rand() % randIntensity) > it2->first + (rand() % randIntensity)) {
                     TestTourney3.Score[counter] = 1;
                 }
                 else {
