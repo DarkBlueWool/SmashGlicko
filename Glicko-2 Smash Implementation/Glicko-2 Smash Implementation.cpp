@@ -363,6 +363,9 @@ int main()
         }
     }
 
+    TS.Events.AddEvent(TestTourney1);
+    TS = TS.NextTimeScale();
+
     //Set up fake tourney results ( bigger number better player ;) )
     Event TestTourney2 = Event(plyrcount * plyrcount - plyrcount, 1);
     counter = 0;
@@ -381,6 +384,9 @@ int main()
             }
         }
     }
+
+    TS.Events.AddEvent(TestTourney2);
+    TS = TS.NextTimeScale();
 
     //Set up fake tourney results ( bigger number better player ;) )
     Event TestTourney3 = Event(plyrcount * plyrcount - plyrcount, 2);
@@ -401,8 +407,6 @@ int main()
         }
     }
 
-    TS.Events.AddEvent(TestTourney1);
-    TS.Events.AddEvent(TestTourney2);
     TS.Events.AddEvent(TestTourney3);
 
     TimeScale TimeScaleAfter = TS.NextTimeScale();
