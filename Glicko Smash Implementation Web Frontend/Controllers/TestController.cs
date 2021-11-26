@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,14 @@ namespace Glicko_Smash_Implementation_Web_Frontend.Controllers
     {
         public IActionResult Index()
         {
-            return View();
+            return Ok("Index");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Where()
+        {
+            return Ok("GOD DAMN IT KRIS, WHERE THE FUCK ARE WE!?");
         }
     }
 }
