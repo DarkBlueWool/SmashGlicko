@@ -4,6 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>aspnet-Smash_Glicko_Implementation_Web_Frontend-50D7762F-F4B3-4CCA-851A-FA040866523E</UserSecretsId>
     <RootNamespace>Smash_Glicko_Implementation_Web_Frontend</RootNamespace>
+    <StartupObject>Smash_Glicko_Implementation_Web_Frontend.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
