@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Glicko_Smash_Implementation_Web_Frontend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,9 +17,21 @@ namespace Glicko_Smash_Implementation_Web_Frontend.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
+        }
+        [AllowAnonymous]
+        [HttpPost]
+        public IActionResult Create(CreateLeagueModel leagueModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return this.LocalRedirect("/Home/Index");
+            }
+            return Ok("You did it :)");
         }
     }
 }
