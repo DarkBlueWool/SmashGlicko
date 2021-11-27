@@ -17,13 +17,12 @@ namespace Glicko_Smash_Implementation_Web_Frontend.Controllers
             return View();
         }
 
-        [AllowAnonymous]
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
-        [AllowAnonymous]
+
         [HttpPost]
         public IActionResult Create(CreateLeagueModel leagueModel)
         {
