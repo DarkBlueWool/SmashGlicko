@@ -9,5 +9,7 @@ namespace Glicko_Smash_Implementation_Web_Frontend.Models
 
         [Required]
         public string LeagueGame { get; set; }
+
+        public bool IsPublic { get; set; }
     }
 }
