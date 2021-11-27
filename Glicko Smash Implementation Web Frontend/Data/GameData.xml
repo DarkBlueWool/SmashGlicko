@@ -21,6 +21,11 @@
 		<SmashName>Unknown</SmashName>
 	</Game>
 	<Game>
+		<Name>Guilty Gear XX Accent Core Plus R</Name>
+		<InternalID>GGXXAC+R</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
 		<Name>Tekken 7</Name>
 		<InternalID>TouchGrass</InternalID>
 		<SmashName>Unknown</SmashName>
