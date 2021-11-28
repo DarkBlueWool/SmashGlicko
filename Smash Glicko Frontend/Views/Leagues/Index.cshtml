@@ -1,0 +1,20 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Leagues";
+}
+<div class="text-center">
+    <h1 class="display-4">What are leagues?</h1>
+    <p>Leagues are groups of tournaments that are used to determine a skill rating for players.</p>
+    <p>Future tournaments held in the league can use this skill rating for seeding.</p>
+    <p>Skill ratings within a league are NOT able to be transfered to another, as the rating is relative to others in each league.</p>
+    <p>Furthermore, a player must have multiple torunaments with notible set counts for the system to hone in on an accurate rating.</p>
+    <p>Due to these and other factors, it is highly reccomended to still have a human either manually seed the top of the bracket, or review the work of this program.</p>
+    <p>Glicko-2 is used for skill determination. Learn more about it <a href="http://www.glicko.net/glicko.html">here</a>.</p>
+</div>
+
+
+<div align="center">
+    <input class="text-center" type="button" value="Create League" onclick="location.href='@Url.Action("Create", "Leagues")'" />
+</div>

@@ -1,0 +1,47 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewData["Title"] = "Create League";
+    //Create the list of games from the GameData XML file - this will break on a poorly made file
+    List<SelectListItem> PossibleGames = new List<SelectListItem>();
+    List<Glicko_Smash_Implementation_Web_Frontend.Shortcuts.GameData> data = Glicko_Smash_Implementation_Web_Frontend.Shortcuts.Shortcuts.GetGameData(@"Data/GameData.xml");
+            PossibleGames.Add(new SelectListItem
+                {
+                    Text = data[0].Name,
+                    Value = data[0].InternalID,
+                    Selected =  true
+                });
+    for (int i = 1; i < data.Count; i++)
+    {
+        PossibleGames.Add(new SelectListItem
+                {
+                    Text = data[i].Name,
+                    Value = data[i].InternalID
+                });
+}
+}
+
+
+<form name="CreateLeagueForm" action="/Leagues/Create" method="post">
+    <div align="center">
+        <label>Name of League</label>
+    </div>
+    <div align="center">
+        <input id="LeagueNameBox" name="LeagueName" type="text" placeholder="Name" />
+    </div>
+    <div align="center">
+        <label>Game of League</label>
+        @Html.DropDownList("LeagueGame", PossibleGames, new { @class = "form-control" })
+    </div>
+    <div align="center">
+        <label>League Viewability</label>
+    </div>
+    <div align="center">
+        <label>Public </label>
+        <input type="checkbox" id="PublicCheckBox" name="IsPublic" checked="checked" value="True"/>
+    </div>
+    <div align="center">
+        <input id="LeagueSubmitBox" type="submit" value="Submit" />
+    </div>
+</form>

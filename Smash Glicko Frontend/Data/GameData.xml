@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<GameData>
+	<Game>
+		<Name>Super Smash Brothers Ultimate</Name>
+		<InternalID>SSBU</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Super Smash Brothers Melee</Name>
+		<InternalID>SSBM</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Super Smash Brothers Brawl</Name>
+		<InternalID>SSBB</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Guilty Gear Strive</Name>
+		<InternalID>GGS</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Guilty Gear XX Accent Core Plus R</Name>
+		<InternalID>GGXXAC+R</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Tekken 7</Name>
+		<InternalID>TouchGrass</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+	<Game>
+		<Name>Melty Blood</Name>
+		<InternalID>PLEASETouchGrass</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
+</GameData>
