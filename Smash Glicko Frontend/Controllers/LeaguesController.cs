@@ -19,6 +19,12 @@ namespace Smash_Glicko_Frontend.Controllers
             return View();
         }
 
+        [AllowAnonymous]
+        public IActionResult List()
+        {
+            return View();
+        }
+
         [HttpGet]
         public IActionResult Create()
         {

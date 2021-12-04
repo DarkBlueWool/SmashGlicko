@@ -24,4 +24,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Data\GameData.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

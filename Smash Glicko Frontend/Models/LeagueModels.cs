@@ -15,18 +15,23 @@ namespace Smash_Glicko_Frontend.Models
 
     public class LeagueModel
     {
+        public uint LeagueId { get; set; }
+
         public string LeagueName { get; set; }
 
         public string LeagueGame { get; set; }
 
         public List<TimeFrameModel> TimeFrames { get; set; }
 
+        public uint EventCount = 0;
+
         public DateTime InitalTimeFrameStart { get; set; }
 
         public TimeSpan TimeFrameSpan { get ; set; }
 
-        public LeagueModel(string Name, string Game, List<TimeFrameModel> timeFrames, DateTime initialTimeFrameStart, TimeSpan timeFrameSpan, bool isPublic)
+        public LeagueModel(uint ID, string Name, string Game, List<TimeFrameModel> timeFrames, DateTime initialTimeFrameStart, TimeSpan timeFrameSpan, bool isPublic)
         {
+            LeagueId = ID;
             LeagueName = Name;
             LeagueGame = Game;
             TimeFrames = timeFrames;
@@ -36,6 +41,16 @@ namespace Smash_Glicko_Frontend.Models
         }
 
         public bool IsPublic { get; set; }
+    }
+
+    public class ViewLeagueModel
+    {
+        [Required] public uint LeagueId { get; set; }
+
+        public ViewLeagueModel(uint ID)
+        {
+            LeagueId = ID;
+        }
     }
 
     public class TimeFrameModel
