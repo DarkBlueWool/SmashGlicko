@@ -14,91 +14,18 @@
         <h>Public Leagues</h>
     </div>
 
-    <div class=LeagueOutline>
-        <div class=LeagueItem>Name</div>
-        <div class=LeagueItem>Game</div>
-    </div>
-
     <ol class=NoStyleList name=”LeagueList” id=”LeagueList”>
-        @for (int i = 0; i < @Leagues.Count; i++) {
-        <li class=League>
-            <div class=LeagueDD>
-                <div class=LeagueItem>@Leagues[i].LeagueName</div>
-                <div class=LeagueItem>@Leagues[i].LeagueGame</div>
-                <div class=LeagueDD-content>
-                    <div class=LeagueItem>@Leagues[i].TimeFrames[Leagues[i].TimeFrames.Count - 1].Players.Count Players</div>
-                    <div class=LeagueItem>@Leagues[i].EventCount Events</div>
-                    <input type="button" value="View League" onClick="location.href='@Url.Action("Display", "Leagues", new ViewLeagueModel(Leagues[i].LeagueId))'">
-                </div>
-            </div>
-        </li>
+        @for (int i = 0; i < @Leagues.Count; i++)
+        {
+            <li class=League>
+                <a class=LeagueLink href="@Url.Action("Display", "Leagues", new ViewLeagueModel(Leagues[i].LeagueId))">
+                    <div class=LeagueItem>@Leagues[i].LeagueName</div>
+                    <div class=LeagueItem>@Leagues[i].LeagueGame</div>
+                    <div class=LeagueItem></div>
+                    <div class=LeagueItem>@Leagues[i].TimeFrames[Leagues[i].TimeFrames.Count - 1].Players.Count<br>Players</div>
+                    <div class=LeagueItem>@Leagues[i].EventCount<br>Events</div>
+                </a>
+            </li>
         }
     </ol>
 </body>
-
-<style>
-    body {
-        background-color: #404040;
-    }
-
-    .LeagueDD-content {
-        display: none;
-        position: absolute;
-        background-color: #f9f9f9;
-        float: left;
-        min-width: 200px;
-        max-width: 300px;
-        box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-        padding: 12px 16px;
-        z-index: 1;
-    }
-
-    .LeagueDD:hover .LeagueDD-content {
-        display: block;
-    }
-
-    .NoStyleList {
-        list-style-type: none;
-        margin: 0px;
-        margin-left: auto;
-        margin-right: auto;
-        padding: 0px;
-    }
-
-    .Title {
-        text-align: center;
-        font-size: 40px;
-        font-weight: bold;
-    }
-
-    .LeagueOutline {
-        max-width: 800px;
-        min-width: 400px;
-        background-color: #606060;
-        color: #FFFFFF;
-        padding: 2px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-        border-color: #404040;
-    }
-
-    .League {
-        background-color: #757575;
-        max-width: 800px;
-        min-width: 400px;
-        text-align: center;
-        border-top-style: solid;
-        border-bottom-style: solid;
-        border-color: #404040;
-        padding: 2px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .LeagueItem {
-        display: inline-block;
-        width: 49%;
-    }
-
-</style>
