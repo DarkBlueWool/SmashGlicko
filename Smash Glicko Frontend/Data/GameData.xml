@@ -35,4 +35,9 @@
 		<InternalID>PLEASETouchGrass</InternalID>
 		<SmashName>Unknown</SmashName>
 	</Game>
+	<Game>
+		<Name>Unknown</Name>
+		<InternalID>Unknown</InternalID>
+		<SmashName>Unknown</SmashName>
+	</Game>
 </GameData>

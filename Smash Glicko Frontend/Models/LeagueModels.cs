@@ -9,7 +9,11 @@ namespace Smash_Glicko_Frontend.Models
 
         [Required]
         public string LeagueGame { get; set; }
+        
+        [Required]
+        public uint TimeFrameSpan { get; set; }
 
+        [Required]
         public bool IsPublic { get; set; }
     }
 

@@ -6,13 +6,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Smash_Glicko_Frontend.Data;
 
 namespace Smash_Glicko_Frontend.Controllers
 {
     [Authorize]
     public class LeaguesController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public LeaguesController(ILogger<HomeController> logger, ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         [AllowAnonymous]
         public IActionResult Index()
         {
@@ -32,13 +40,22 @@ namespace Smash_Glicko_Frontend.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateLeagueModel leagueModel)
+        public IActionResult Create(CreateLeagueModel model)
         {
             if (!ModelState.IsValid)
             {
                 return this.LocalRedirect("/Home/Index");
             }
-            return Ok("You did it :)\n" + leagueModel.LeagueName + " is created for the game " + leagueModel.LeagueGame + " with the publicity set to " + leagueModel.IsPublic);
+            var League = new DatabaseLeagueModel(model.LeagueName, model.LeagueGame, new List<uint>(), DateTime.UtcNow, model.TimeFrameSpan, true);
+            EntityEntry<DatabaseLeagueModel> Entry = _context.Leagues.Add(League);
+            _context.SaveChanges();
+            return LocalRedirect("/Leagues/Display/" + Entry.Entity.LeagueId);
+        }
+
+        [HttpGet]
+        public IActionResult Display(uint LeagueId)
+        {
+            return View(LeagueId);
         }
     }
 }

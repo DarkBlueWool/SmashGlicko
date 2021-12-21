@@ -4,9 +4,15 @@
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
-
+@inject ApplicationDbContext context
 @{
-    List<LeagueModel> Leagues = TestData.Leagues;
+    IEnumerable<DatabaseLeagueModel> Leagues = context.Leagues.Where(League => League.IsPublic == true).AsEnumerable();
+    List<Glicko_Smash_Implementation_Web_Frontend.Shortcuts.GameData> data = Glicko_Smash_Implementation_Web_Frontend.Shortcuts.Shortcuts.GetGameData(@"Data/GameData.xml");
+    Dictionary<string, string> GameNames = new Dictionary<string, string>();
+    foreach (Glicko_Smash_Implementation_Web_Frontend.Shortcuts.GameData Game in data)
+    {
+        GameNames.Add(Game.InternalID, Game.Name);
+    }
 }
 
 <body>
@@ -15,15 +21,15 @@
     </div>
 
     <ol class=NoStyleList name=”LeagueList” id=”LeagueList”>
-        @for (int i = 0; i < @Leagues.Count; i++)
+        @foreach (DatabaseLeagueModel League in Leagues)
         {
             <li class=League>
-                <a class=LeagueLink href="@Url.Action("Display", "Leagues", new ViewLeagueModel(Leagues[i].LeagueId))">
-                    <div class=LeagueItem>@Leagues[i].LeagueName</div>
-                    <div class=LeagueItem>@Leagues[i].LeagueGame</div>
+                <a class=LeagueLink href="@Url.Action("Display", "Leagues", new ViewLeagueModel(League.LeagueId))">
+                    <div class=LeagueItem>@League.LeagueName</div>
+                    <div class=LeagueItem>@GameNames[League.LeagueGame]</div>
                     <div class=LeagueItem></div>
-                    <div class=LeagueItem>@Leagues[i].TimeFrames[Leagues[i].TimeFrames.Count - 1].Players.Count<br>Players</div>
-                    <div class=LeagueItem>@Leagues[i].EventCount<br>Events</div>
+                    <div class=LeagueItem>@(League.TimeFrameIDs.Length/4)<br>Timeframes</div>
+                    <div class=LeagueItem>idfk<br>Events</div>
                 </a>
             </li>
         }
