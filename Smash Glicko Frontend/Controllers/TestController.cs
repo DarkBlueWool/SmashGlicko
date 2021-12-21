@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Smash_Glicko_Frontend.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,15 @@ namespace Smash_Glicko_Frontend.Controllers
         public IActionResult Where()
         {
             return Ok("GOD DAMN IT KRIS, WHERE THE FUCK ARE WE!?");
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> GqlApi(string ApiToken)
+        {
+            Shortcuts.GQLInteractor Interactor = new Shortcuts.GQLInteractor();
+            EventModel model = await Interactor.GetEventData("tournament/4o4-smash-night-35/event/singles", ApiToken);
+            return Ok(model.Player1Wins.Count + " " + model.PlayerCount);
         }
     }
 }

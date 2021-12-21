@@ -114,22 +114,29 @@ namespace Smash_Glicko_Frontend.Models
     }
     public class EventModel
     {
-        public uint EventID;
+        //Internal EventID, NOT smash.gg id
+        public uint EventID { get; set; }
 
-        public uint PlayerCount;
+        public string EventSlug { get; set; }
 
-        public List<SetModel> Sets = new List<SetModel>();
+        public uint PlayerCount { get; set; }
 
-        public EventModel(uint eventID, uint playerCount)
+        public List<uint> Player1ID { get; set; }
+
+        public List<uint> Player2ID { get; set; }
+
+        public List<ushort> Player1Wins { get; set; }
+
+        public List<ushort> Player2Wins { get; set; }
+
+        public EventModel(string eventSlug)
         {
-            EventID = eventID;
-            PlayerCount = playerCount;
-        }
-        public EventModel(uint eventID, uint playerCount, List<SetModel> sets)
-        {
-            EventID = eventID;
-            PlayerCount = playerCount;
-            Sets = sets;
+            EventSlug = eventSlug;
+            PlayerCount = 0;
+            Player1ID = new List<uint>();
+            Player2ID = new List<uint>();
+            Player1Wins = new List<ushort>();
+            Player2Wins = new List<ushort>();
         }
     }
 
