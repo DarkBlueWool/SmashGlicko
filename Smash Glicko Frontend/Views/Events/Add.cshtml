@@ -1,0 +1,38 @@
+﻿@using Smash_Glicko_Frontend.Data
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@inject ApplicationDbContext context
+@{
+    ViewData["Title"] = "Add Event to Database";
+    IEnumerable<DatabaseLeagueModel> Leagues = context.Leagues.Where(League => League.IsPublic == true).AsEnumerable();
+    List<SelectListItem> LeagueSelectList = new List<SelectListItem>();
+    //Select the league to add to - this will be changed to be only leagues the person adding owns, but for now I'm not dealing with security perms ;)
+    bool Sel = true;
+    foreach (DatabaseLeagueModel League in Leagues)
+    {
+        LeagueSelectList.Add(new SelectListItem
+                {
+                    Text = League.LeagueName,
+                    Value = League.LeagueId.ToString(),
+                    Selected = Sel
+                });
+        Sel = false;
+    }
+}
+
+<form name="CreateLeagueForm" action="/Events/Add" method="post">
+    <div align="center">
+        <label>Event Link</label>
+    </div>
+    <div align="center">
+        <input id="EventLinkBox" name="EventLink" type="text" placeholder="EventLink" />
+    </div>
+    <div align="center">
+        <label>League to add to (unimplemented)</label>
+        @Html.DropDownList("LeagueId", LeagueSelectList, new { @class = "LimitedWidthMedium form-control"})
+    </div>
+    <div align="center">
+        <input id="LeagueSubmitBox" type="submit" value="Submit" />
+    </div>
+</form>

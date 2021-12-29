@@ -57,12 +57,6 @@ namespace Smash_Glicko_Frontend.Controllers
         {
             return View(LeagueId);
         }
-
-        [HttpGet]
-        public IActionResult AddEvent()
-        {
-            return View();
-        }
     }
 }
 namespace Glicko_Smash_Implementation_Web_Frontend.Shortcuts

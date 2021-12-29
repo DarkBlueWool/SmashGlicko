@@ -112,10 +112,18 @@ namespace Smash_Glicko_Frontend.Models
             Id = PlayerID;
         }
     }
+    public class CreateEventModel
+    {
+        [Required]
+        public uint LeagueId { get; set; }
+        [Required]
+        public string EventLink { get; set; }
+
+    }
     public class EventModel
     {
         //Internal EventID, NOT smash.gg id
-        public uint EventID { get; set; }
+        public uint? EventID { get; set; }
 
         public string EventSlug { get; set; }
 

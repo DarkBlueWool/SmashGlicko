@@ -26,8 +26,7 @@ namespace Smash_Glicko_Frontend.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GqlApi(string ApiToken)
         {
-            Shortcuts.GQLInteractor Interactor = new Shortcuts.GQLInteractor();
-            EventModel model = await Interactor.GetEventData("tournament/4o4-smash-night-35/event/singles", ApiToken);
+            EventModel model = await Shortcuts.GQLInteractor.GetEventData("tournament/4o4-smash-night-35/event/singles", ApiToken);
             return Ok(model.Player1Wins.Count + " " + model.PlayerCount);
         }
     }

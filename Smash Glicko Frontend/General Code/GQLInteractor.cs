@@ -7,10 +7,10 @@ namespace Smash_Glicko_Frontend.Shortcuts
 {
     public class GQLInteractor
     {
-        GraphQLHttpClient Client = new GraphQLHttpClient("https://api.smash.gg/gql/alpha", new NewtonsoftJsonSerializer());
+        static GraphQLHttpClient Client = new GraphQLHttpClient("https://api.smash.gg/gql/alpha", new NewtonsoftJsonSerializer());
 
 
-        public async Task<EventModel> GetEventData(string EventSlug, string ApiToken)
+        public static async Task<EventModel> GetEventData(string EventSlug, string ApiToken)
         {
             EventModel Output = new EventModel(EventSlug);
 
@@ -50,6 +50,9 @@ namespace Smash_Glicko_Frontend.Shortcuts
             };
 
             GraphQL.GraphQLResponse<Models.GraphQL.EventGet.EventResponseType> Response = await Client.SendQueryAsync<Models.GraphQL.EventGet.EventResponseType>(Request);
+
+            //If error, return blank for now. I'll properly parse or report errors later
+            if (Response.Errors.Length > 0) return Output;
 
             Output.EventSlug = EventSlug;
             HashSet<uint> PlayerIDs = new HashSet<uint>();
