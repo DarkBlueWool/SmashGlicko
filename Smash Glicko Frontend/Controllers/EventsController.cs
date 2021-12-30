@@ -28,18 +28,21 @@ namespace Smash_Glicko_Frontend.Controllers
             //Example Link - https://smash.gg/tournament/4o4-smash-night-39/event/singles/...
             //Example Slug - tournament/4o4-smash-night-39/event/singles
             string slug;
-            string ApiToken = ":(";
+            string ApiToken = GQLInteractor.GetSmashGGAuthToken();
 
             string[] temp = model.EventLink.Split(new String[] { "smash.gg/" }, StringSplitOptions.None)[1].Split('/');
 
             //If it's not long enough to contain the event or isn't obviously a real link, return bad request
-            if (temp.Length < 4 || !temp[0].Equals("tournament") || !temp[2].Equals("event")) return BadRequest("Link don't look right - " + temp[0] + " != tournament || " + temp[2] + " != event || Length (" + temp.Length.ToString() + ") < 4");
+            if (temp.Length < 4 || !temp[0].Equals("tournament") || !temp[2].Equals("event") && !temp[2].Equals("events")) return BadRequest("Link don't look right - " + temp[0] + " != tournament || " + temp[2] + " != event || Length (" + temp.Length.ToString() + ") < 4");
 
-            slug = "tournament/" + temp[1] + "/event/" + temp[2];
+            slug = "tournament/" + temp[1] + "/event/" + temp[3];
 
+            //Event Slug is used to contain an error message if anything fucks up
             EventModel NewEvent = await GQLInteractor.GetEventData(slug, ApiToken);
-
-            if (NewEvent.EventID == null) return BadRequest("GraphQL Error (I haven't added proper error parsing :(");
+            if (!NewEvent.EventSlug.Equals(slug))
+            {
+                return BadRequest(NewEvent.EventSlug);
+            }
             return Ok("Made it :)");
         }
     }

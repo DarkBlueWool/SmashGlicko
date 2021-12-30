@@ -127,6 +127,8 @@ namespace Smash_Glicko_Frontend.Models
 
         public string EventSlug { get; set; }
 
+        public uint? SmashID { get; set; }
+
         public uint PlayerCount { get; set; }
 
         public List<uint> Player1ID { get; set; }

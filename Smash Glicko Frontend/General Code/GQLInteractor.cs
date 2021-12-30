@@ -9,7 +9,22 @@ namespace Smash_Glicko_Frontend.Shortcuts
     {
         static GraphQLHttpClient Client = new GraphQLHttpClient("https://api.smash.gg/gql/alpha", new NewtonsoftJsonSerializer());
 
+        public static string GetSmashGGAuthToken()
+        {
+            string FileContents = File.ReadAllText(Path.Combine(Startup.SGSettingsFolderPath, "AuthSettings.txt"));
+            string[] AuthSettings = FileContents.Split("\n", StringSplitOptions.None);
+            foreach (string Setting in AuthSettings)
+            {
+                if (Setting.Split('=')[0].Contains("SmashGGAuthToken"))
+                {
+                    return Setting.Split(" = ", StringSplitOptions.TrimEntries)[1];
+                }
+            }
+            File.WriteAllText(Path.Combine(Startup.SGSettingsFolderPath, "AuthSettings.txt"), FileContents + "\nSmashGGAuthToken = XXXXXXXXXXXXXXXXXXXX");
+            return "XXXXXXXXXXXXXXXXXXXX";
+        }
 
+        //Gets event data. Leaves EventID as null and changes the event slug to the error if it runs into an HTTP Error
         public static async Task<EventModel> GetEventData(string EventSlug, string ApiToken)
         {
             EventModel Output = new EventModel(EventSlug);
@@ -48,28 +63,39 @@ namespace Smash_Glicko_Frontend.Shortcuts
                     perPage = 900
                 }
             };
-
-            GraphQL.GraphQLResponse<Models.GraphQL.EventGet.EventResponseType> Response = await Client.SendQueryAsync<Models.GraphQL.EventGet.EventResponseType>(Request);
-
-            //If error, return blank for now. I'll properly parse or report errors later
-            if (Response.Errors.Length > 0) return Output;
-
-            Output.EventSlug = EventSlug;
-            HashSet<uint> PlayerIDs = new HashSet<uint>();
-            foreach(Models.GraphQL.EventGet.NodeType Node in Response.Data.Event.Sets.Nodes)
+            try
             {
-                if (Node.DisplayScore != "DQ")
-                {
-                    Output.Player1Wins.Add(ushort.Parse(Node.DisplayScore.Split("-", StringSplitOptions.TrimEntries)[0]));
-                    Output.Player2Wins.Add(ushort.Parse(Node.DisplayScore.Split("-", StringSplitOptions.TrimEntries)[1]));
-                    Output.Player1ID.Add(uint.Parse(Node.Slots[0].Entrant.Id));
-                    Output.Player2ID.Add(uint.Parse(Node.Slots[1].Entrant.Id));
-                    PlayerIDs.Add(uint.Parse(Node.Slots[0].Entrant.Id));
-                    PlayerIDs.Add(uint.Parse(Node.Slots[1].Entrant.Id));
-                }
-            }
+                GraphQL.GraphQLResponse<Models.GraphQL.EventGet.EventResponseType> Response = await Client.SendQueryAsync<Models.GraphQL.EventGet.EventResponseType>(Request);
 
-            Output.PlayerCount = (uint)PlayerIDs.Count;
+                Output.EventSlug = EventSlug;
+                HashSet<uint> PlayerIDs = new HashSet<uint>();
+                foreach (Models.GraphQL.EventGet.NodeType Node in Response.Data.Event.Sets.Nodes)
+                {
+                    if (Node.DisplayScore != "DQ")
+                    {
+                        Output.Player1Wins.Add(ushort.Parse(Node.DisplayScore.Split("-", StringSplitOptions.TrimEntries)[0]));
+                        Output.Player2Wins.Add(ushort.Parse(Node.DisplayScore.Split("-", StringSplitOptions.TrimEntries)[1]));
+                        Output.Player1ID.Add(uint.Parse(Node.Slots[0].Entrant.Id));
+                        Output.Player2ID.Add(uint.Parse(Node.Slots[1].Entrant.Id));
+                        PlayerIDs.Add(uint.Parse(Node.Slots[0].Entrant.Id));
+                        PlayerIDs.Add(uint.Parse(Node.Slots[1].Entrant.Id));
+                    }
+                }
+
+                Output.PlayerCount = (uint)PlayerIDs.Count;
+            } catch(GraphQL.Client.Http.GraphQLHttpRequestException Exception)
+            {
+                switch (Exception.StatusCode)
+                {
+                    case System.Net.HttpStatusCode.BadRequest:
+                        Output.EventSlug = "ERROR : Bad Request. Either bad Auth Token (server side) or you gave me a bad URL >:(";
+                        break;
+
+                    default:
+                        Output.EventSlug = "ERROR : " + Exception.StatusCode.ToString();
+                        break;
+                };
+            }
 
             return Output;
         }

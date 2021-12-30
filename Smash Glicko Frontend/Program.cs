@@ -41,4 +41,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+Smash_Glicko_Frontend.Shortcuts.Startup.VerifyAppData();
+
 app.Run();

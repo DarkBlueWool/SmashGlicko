@@ -8,6 +8,8 @@ namespace Smash_Glicko_Frontend.Models.GraphQL.EventGet
     public class EventType
     {
         public string Name { get; set; }
+        
+        public uint Id { get; set; }
         public SetType Sets { get; set; }
     }
 
