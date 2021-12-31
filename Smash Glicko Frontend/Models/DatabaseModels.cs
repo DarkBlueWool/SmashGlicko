@@ -51,6 +51,8 @@ namespace Smash_Glicko_Frontend.Models
 
         public string EventSlug { get; set; }
 
+        public uint SmashGGEventID { get; set; }
+
         public uint PlayerCount { get; set; }
 
         public byte[] Player1ID { get; set; }
@@ -68,13 +70,15 @@ namespace Smash_Glicko_Frontend.Models
             Player2ID = new byte[0];
             Player1Wins = new byte[0];
             Player2Wins = new byte[0];
+            SmashGGEventID = 0;
             EventSlug = "Unknown";
         }
 
-        public DatabaseEventModel(uint playerCount, string eventSlug, uint[] player1ID, uint[] player2ID, short[] player1Wins, short[] player2Wins)
+        public DatabaseEventModel(uint playerCount, uint smashGGEventID, string eventSlug, uint[] player1ID, uint[] player2ID, short[] player1Wins, short[] player2Wins)
         {
             PlayerCount = playerCount;
             EventSlug = eventSlug;
+            SmashGGEventID= smashGGEventID;
             Player1ID = ByteConvertion.UintToByte(player1ID);
             Player2ID = ByteConvertion.UintToByte(player2ID);
             Player1Wins = ByteConvertion.ShortToByte(player1Wins);

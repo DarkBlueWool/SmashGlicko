@@ -54,6 +54,9 @@ namespace Smash_Glicko_Frontend.Data
                 .Property(b => b.EventID)
                 .IsRequired();
             builder
+                .Property(b => b.SmashGGEventID)
+                .IsRequired();
+            builder
                 .Property(b => b.EventSlug)
                 .IsRequired();
             builder
