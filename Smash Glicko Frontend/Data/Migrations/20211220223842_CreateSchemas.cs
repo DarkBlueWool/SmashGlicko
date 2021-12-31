@@ -54,6 +54,7 @@ namespace Smash_Glicko_Frontend.Migrations
                 {
                     EventID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    SmashGGEventID = table.Column<long>(type: "bigint", nullable: false),
                     EventSlug = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PlayerCount = table.Column<long>(type: "bigint", nullable: false),
                     Player1ID = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
