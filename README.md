@@ -1,5 +1,5 @@
 # Overview
-An implementation of Glicko rating system to be used for smash local scenes, or any similiarly scored tournament ran on smash.gg. No other websites are currently planned to be added to input data, but such a possibility isn't out of the question. It has a web frontend for ease of use by the end user, ~~and because I didn't realize how much of a pain that is to do.~~
+An implementation of the Glicko rating system to be used for smash local scenes, or any similiarly scored tournament ran on smash.gg. No other websites are currently planned to be added to input data, but such a possibility isn't out of the question. It has a web frontend for ease of use by the end user, ~~and because I didn't realize how much of a pain that is to do.~~
 
 
 # Glicko
