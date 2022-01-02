@@ -19,7 +19,7 @@ Leagues are seperated into Timeframes. These are units of time of fixed length (
 Events are NOT stored as a part of a League. They are their own entry in the database, and Leagues merely reference their ID within the timeframe they are a part of.
 
 # TODO
-This is currently VERY unfinished. What's left to do is :
+This is currently VERY unfinished. Some of what's left to do is :
 
 Add timeframes functionality to the app.
 
