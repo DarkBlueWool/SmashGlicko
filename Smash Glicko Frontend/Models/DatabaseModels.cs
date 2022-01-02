@@ -74,15 +74,15 @@ namespace Smash_Glicko_Frontend.Models
             EventSlug = "Unknown";
         }
 
-        public DatabaseEventModel(uint playerCount, uint smashGGEventID, string eventSlug, uint[] player1ID, uint[] player2ID, short[] player1Wins, short[] player2Wins)
+        public DatabaseEventModel(uint playerCount, uint smashGGEventID, string eventSlug, uint[] player1ID, uint[] player2ID, ushort[] player1Wins, ushort[] player2Wins)
         {
             PlayerCount = playerCount;
             EventSlug = eventSlug;
             SmashGGEventID= smashGGEventID;
             Player1ID = ByteConvertion.UintToByte(player1ID);
             Player2ID = ByteConvertion.UintToByte(player2ID);
-            Player1Wins = ByteConvertion.ShortToByte(player1Wins);
-            Player2Wins = ByteConvertion.ShortToByte(player2Wins);
+            Player1Wins = ByteConvertion.UShortToByte(player1Wins);
+            Player2Wins = ByteConvertion.UShortToByte(player2Wins);
         }
     }
 
@@ -103,15 +103,15 @@ namespace Smash_Glicko_Frontend.Shortcuts
             System.Buffer.BlockCopy(input, 0, Output, 0, input.Length);
             return Output;
         }
-        public static byte[] ShortToByte(short[] input)
+        public static byte[] UShortToByte(ushort[] input)
         {
             byte[] Output = new byte[input.Length * 2];
-            System.Buffer.BlockCopy(input, 0, Output, 0, input.Length * 4);
+            System.Buffer.BlockCopy(input, 0, Output, 0, input.Length * 2);
             return Output;
         }
-        public static short[] ByteToShort(byte[] input)
+        public static ushort[] ByteToUShort(byte[] input)
         {
-            short[] Output = new short[input.Length / 2];
+            ushort[] Output = new ushort[input.Length / 2];
             System.Buffer.BlockCopy(input, 0, Output, 0, input.Length);
             return Output;
         }

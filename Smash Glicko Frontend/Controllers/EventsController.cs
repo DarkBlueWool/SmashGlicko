@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Smash_Glicko_Frontend.Data;
 using Smash_Glicko_Frontend.Models;
 using Smash_Glicko_Frontend.Shortcuts;
 
@@ -6,6 +7,12 @@ namespace Smash_Glicko_Frontend.Controllers
 {
     public class EventsController : Controller
     {
+        private readonly ApplicationDbContext _context;
+
+        public EventsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
         public IActionResult Index()
         {
             return Ok("Here we go again...");
@@ -28,7 +35,7 @@ namespace Smash_Glicko_Frontend.Controllers
             //Example Link - https://smash.gg/tournament/4o4-smash-night-39/event/singles/...
             //Example Slug - tournament/4o4-smash-night-39/event/singles
             string slug;
-            string ApiToken = GQLInteractor.GetSmashGGAuthToken();
+
 
             string[] temp = model.EventLink.Split(new String[] { "smash.gg/" }, StringSplitOptions.None)[1].Split('/');
 
@@ -37,12 +44,21 @@ namespace Smash_Glicko_Frontend.Controllers
 
             slug = "tournament/" + temp[1] + "/event/" + temp[3];
 
-            //Event Slug is used to contain an error message if anything fucks up
-            EventModel NewEvent = await GQLInteractor.GetEventData(slug, ApiToken);
-            if (!NewEvent.EventSlug.Equals(slug))
+            //Will still crash if the event name is bad. I'll deal with that later :)
+            ReturnModel Output = await DatabaseInteractor.AddEventFromSmashGG(slug, _context);
+
+            switch (Output.Success)
             {
-                return BadRequest(NewEvent.EventSlug);
+                //General bad input stuff
+                case -1:
+                    return BadRequest(Output.Error);
+                //SmashGG ID returned as null... That shouldn't happen
+                case -2:
+                    return this.StatusCode(500);
+                default:
+                    break;
             }
+
             return Ok("Made it :)");
         }
     }

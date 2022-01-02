@@ -37,6 +37,7 @@ namespace Smash_Glicko_Frontend.Shortcuts
                         @"query EventSets($eventSlug: String!, $page: Int!, $perPage: Int!) {
                           event(slug: $eventSlug) {
                             name
+                            id
                             sets(
                               page: $page
                               perPage: $perPage
@@ -69,6 +70,7 @@ namespace Smash_Glicko_Frontend.Shortcuts
 
                 Output.EventSlug = EventSlug;
                 HashSet<uint> PlayerIDs = new HashSet<uint>();
+                Output.SmashID = Response.Data.Event.Id;
                 foreach (Models.GraphQL.EventGet.NodeType Node in Response.Data.Event.Sets.Nodes)
                 {
                     if (Node.DisplayScore != "DQ")
