@@ -27,4 +27,6 @@ Add Ownership, Moderators, and Viewers (for private leagues) of Leagues - Will c
 
 Add google authentication - I really don't want to deal with my own security. This is substantially better for that reason alone.
 
+Unify Serialization to actually be well coded. (Namely the XML stuff)
+
 Rework literally everything to work in a queue system to prevent Rate Limiting from throwing Errors - This is last because I just want to get a functional system before I mess with that. Until then I'm still going to try to make most backend things functions to make the transition not hurt really bad.
