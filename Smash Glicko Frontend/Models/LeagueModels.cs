@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Smash_Glicko_Frontend.Shortcuts;
+using System.ComponentModel.DataAnnotations;
 
 namespace Smash_Glicko_Frontend.Models
 {
@@ -59,16 +60,21 @@ namespace Smash_Glicko_Frontend.Models
 
     public class TimeFrameModel
     {
+        public uint? TimeframeId { get; set; }
+
+        public uint TimeframeIndex = 0;
+
+        public uint LeagueID { get; set; }
+
         public Dictionary<uint, PlayerModel> Players = new Dictionary<uint, PlayerModel>();
 
-        public uint EventCount;
+        public List<uint> EventIds { get; set; }
 
-        public List<EventModel> Events { get; set;}
-
-        public TimeFrameModel(List<EventModel> IniEvents, Dictionary<uint, PlayerModel> IniPlayers)
+        public TimeFrameModel(List<uint> IniEventIds, Dictionary<uint, PlayerModel> IniPlayers, uint IniTimeframeIndex)
         {
             Dictionary<uint, PlayerModel> AllPlayers = IniPlayers;
-            Events = IniEvents;
+            EventIds = IniEventIds;
+            TimeframeIndex = IniTimeframeIndex;
         }
 
         public TimeFrameModel StartNextTimeFrame()
@@ -78,7 +84,7 @@ namespace Smash_Glicko_Frontend.Models
             //Temp shit
             UpdatedPlayers = Players;
 
-            TimeFrameModel NewFrame = new TimeFrameModel(new List<EventModel>(), UpdatedPlayers);
+            TimeFrameModel NewFrame = new TimeFrameModel(new List<uint>(), UpdatedPlayers, TimeframeIndex + 1);
             return NewFrame;
         }
 
@@ -87,29 +93,109 @@ namespace Smash_Glicko_Frontend.Models
             if (Players.Count == 0)
             {
                 Players = NewPlayers;
-            } else
+            }
+            else
             {
-                foreach (KeyValuePair<uint, PlayerModel> Player in NewPlayers)
+                foreach (KeyValuePair<uint, PlayerModel> NewPlayer in NewPlayers)
                 {
-                    if (!Players.Keys.Contains(Player.Key))
+                    if (!Players.ContainsKey(NewPlayer.Key))
                     {
-                        Players.Add(Player.Key, Player.Value);
+                        Players.Add(NewPlayer.Key, NewPlayer.Value);
                     }
                 }
             }
         }
+        public void AddPlayers(List<uint> NewPlayers)
+        {
+            foreach (uint PlayerID in NewPlayers) {
+                if (!Players.ContainsKey(PlayerID))
+                {
+                    Players.Add(PlayerID, new PlayerModel(PlayerID));
+                }
+            }
+        }
+
+        public byte[] PlayerModelsToBytes()
+        {
+            List<byte> bytes = new List<byte>();
+            foreach (KeyValuePair<uint, PlayerModel> Player in Players)
+            {
+                bytes = (List<byte>)bytes.Concat(Player.Value.ToBytes());
+            }
+            return bytes.ToArray();
+        }
+
+        public Dictionary<uint, PlayerModel> BytesToPlayerModels(byte[] bytes) 
+        {
+            Dictionary<uint, PlayerModel> Output = new Dictionary<uint, PlayerModel>();
+            int PlayerModelSize = PlayerModel.SizeOfBytes();
+            PlayerModel NewPlayer;
+            byte[] inputBytes = new byte[PlayerModelSize];
+            for(int i = 0; i < bytes.Length; i += PlayerModelSize)
+            {
+                System.Buffer.BlockCopy(bytes, i, inputBytes, 0, PlayerModelSize);
+                NewPlayer = PlayerModel.FromBytes(inputBytes);
+                Output.Add(NewPlayer.Id, NewPlayer);
+            }
+            return Output;
+        }
     }
 
-    //UNFINISHED
     public class PlayerModel
     {
-        public long Id { get; set; }
+        public uint Id = 0;
 
-        public bool IsNew = true;
+        public float Rating = 0;
 
-        public PlayerModel(uint PlayerID)
+        public float Deviation = (float) (350 / 173.7178);
+        public float Volatility = (float) 0.06;
+
+        public PlayerModel(uint ID)
         {
-            Id = PlayerID;
+            Id = ID;
+            Rating = 0;
+            Deviation = (float)(350 / 173.7178);
+            Volatility = (float)0.06;
+        }
+
+        //Used to make a blank Playermodel
+        private PlayerModel() { }
+
+        public byte[] ToBytes()
+        {
+            //This is fucking horrible, but serialization is deprecated and this is the easiest way.
+            byte[] Output = new byte[SizeOfBytes()];
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Id), 0, Output, 0, sizeof(uint));
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Rating), 0, Output, sizeof(uint), sizeof(float));
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Deviation), 0, Output, sizeof(uint) + sizeof(float), sizeof(float));
+            System.Buffer.BlockCopy(BitConverter.GetBytes(Volatility), 0, Output, sizeof(uint) + 2 * sizeof(float), sizeof(float));
+            return Output;
+        }
+
+        public static PlayerModel FromBytes(byte[] input)
+        {
+            //A lot of this is unecessary, but I wanna future proof it and be sure
+            if (input.Length != SizeOfBytes())
+            {
+                throw new ArgumentException();
+            }
+            byte[] temp = new byte[sizeof(uint)];
+            System.Buffer.BlockCopy(input, 0, temp, 0, sizeof(uint));
+            uint id = BitConverter.ToUInt32(temp);
+            System.Buffer.BlockCopy(input, sizeof(uint), temp, 0, sizeof(float));
+            System.Buffer.BlockCopy(input, 0, temp, 0, sizeof(float));
+            float rating = BitConverter.ToSingle(temp);
+            System.Buffer.BlockCopy(input, sizeof(uint) + sizeof(float), temp, 0, sizeof(float));
+            float deviation = BitConverter.ToSingle(temp);
+            System.Buffer.BlockCopy(input, sizeof(uint) + 2 * sizeof(float), temp, 0, sizeof(float));
+            float volatility = BitConverter.ToSingle(temp);
+            PlayerModel Output = new PlayerModel() { Id = id, Rating = rating, Deviation = deviation, Volatility = volatility };
+            return Output;
+        }
+
+        public static int SizeOfBytes()
+        {
+            return sizeof(uint) + 3 * sizeof(float);
         }
     }
     public class CreateEventModel

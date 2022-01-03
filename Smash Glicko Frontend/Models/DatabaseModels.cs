@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Smash_Glicko_Frontend.Models;
 using Smash_Glicko_Frontend.Shortcuts;
 
 namespace Smash_Glicko_Frontend.Models
@@ -42,6 +43,20 @@ namespace Smash_Glicko_Frontend.Models
         }
 
         public bool IsPublic { get; set; }
+    }
+
+    public class DatabaseTimeframeModel
+    {
+        [Key]
+        public uint TimeFrameID { get; set; }
+
+        public uint TimeFrameIndex { get; set; }
+
+        public uint League { get; set; }
+
+        public byte[] EventIDs { get; set; }
+
+        public byte[] PlayerData { get; set; }
     }
 
     public class DatabaseEventModel
@@ -114,6 +129,24 @@ namespace Smash_Glicko_Frontend.Shortcuts
             ushort[] Output = new ushort[input.Length / 2];
             System.Buffer.BlockCopy(input, 0, Output, 0, input.Length);
             return Output;
+        }
+
+        public static byte[] FloatToByte(float[] input)
+        {
+            byte[] Output = new byte[input.Length * sizeof(float)];
+            System.Buffer.BlockCopy(input, 0, Output, 0, input.Length * sizeof(float));
+            return Output;
+        }
+
+        public static float[] ByteToFloat(byte[] input)
+        {
+            float[] Output = new float[input.Length / sizeof(float)];
+            System.Buffer.BlockCopy(input, 0, Output, 0, input.Length);
+            return Output;
+        }
+        public static byte[] PlayerModelToByte(PlayerModel[] input)
+        {
+
         }
     }
 }
