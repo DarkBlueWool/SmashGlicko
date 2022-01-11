@@ -3,7 +3,6 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Smash_Glicko_Frontend.Data;
 
@@ -12,14 +11,13 @@ using Smash_Glicko_Frontend.Data;
 namespace Smash_Glicko_Frontend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20211220223842_CreateSchemas")]
-    partial class CreateSchemas
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("ProductVersion", "6.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
@@ -257,6 +255,9 @@ namespace Smash_Glicko_Frontend.Migrations
                     b.Property<long>("PlayerCount")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("SmashGGEventID")
+                        .HasColumnType("bigint");
+
                     b.HasKey("EventID");
 
                     b.ToTable("EventsTable", (string)null);
@@ -294,6 +295,33 @@ namespace Smash_Glicko_Frontend.Migrations
                     b.HasKey("LeagueId");
 
                     b.ToTable("LeaguesTable", (string)null);
+                });
+
+            modelBuilder.Entity("Smash_Glicko_Frontend.Models.DatabaseTimeframeModel", b =>
+                {
+                    b.Property<long>("TimeFrameID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("TimeFrameID"), 1L, 1);
+
+                    b.Property<byte[]>("EventIDs")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<long>("League")
+                        .HasColumnType("bigint");
+
+                    b.Property<byte[]>("PlayerData")
+                        .IsRequired()
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<long>("TimeFrameIndex")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("TimeFrameID");
+
+                    b.ToTable("TimeframeTable", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

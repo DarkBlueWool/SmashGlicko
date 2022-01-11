@@ -1,0 +1,27 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    TimeFrameModel Timeframe = new TimeFrameModel(new List<uint>(), new Dictionary<uint, PlayerModel>(), 0) { TimeframeId = 0, LeagueID = 0 };
+    List<uint> Player1 = new List<uint>() { 0, 1, 25, 3, 4, 5, 6, 7, 8, 9 };
+    List<ushort> P1Wins = new List<ushort>() { 2, 1, 2, 1, 0, 2, 1, 0, 1, 2 };
+    List<uint> Player2 = new List<uint>() { 15, 2, 6, 7, 8, 9, 3, 1, 4, 0 };
+    List<ushort> P2Wins = new List<ushort>();
+    for (int i = 0; i < 10; i++)
+    {
+        P2Wins.Add((ushort)(3 - P1Wins[i]));
+    }
+    EventModel TestEvent = new EventModel("Boogers") { EventID = 0, Player1ID = Player1, Player2ID = Player2, PlayerCount = 10, Player1Wins = P1Wins, Player2Wins = P2Wins };
+
+    Timeframe.AddPlayersFromEvent(TestEvent);
+    Timeframe.Players = TimeFrameModel.BytesToPlayerModels(Timeframe.PlayerModelsToBytes());
+
+    Timeframe = Timeframe.ToDatabaseModel().ToStandardModel();
+}
+<b>
+    @foreach(KeyValuePair<uint,PlayerModel> Player in Timeframe.Players.AsEnumerable())
+    {
+        @Player.Value.Id;
+        <br/>
+    }
+</b>

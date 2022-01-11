@@ -18,6 +18,7 @@ namespace Smash_Glicko_Frontend.Data
         {
             new LeagueEntityTypeConfiguration().Configure(modelBuilder.Entity<DatabaseLeagueModel>());
             new EventEntityTypeConfiguration().Configure(modelBuilder.Entity<DatabaseEventModel>());
+            new TimeframeEntityTypeConfiguration().Configure(modelBuilder.Entity<DatabaseTimeframeModel>());
             base.OnModelCreating(modelBuilder);
         }
     }
@@ -41,11 +42,38 @@ namespace Smash_Glicko_Frontend.Data
                 .Property(b => b.InitalTimeFrameStart)
                 .IsRequired();
             builder
+                .Property(b => b.TimeFrameIDs)
+                .IsRequired();
+            builder
                 .Property(b => b.TimeFrameSpan)
                 .IsRequired();
             builder.ToTable("LeaguesTable");
         }
     }
+
+    public class TimeframeEntityTypeConfiguration : IEntityTypeConfiguration<DatabaseTimeframeModel>
+    {
+        public void Configure(EntityTypeBuilder<DatabaseTimeframeModel> builder)
+        {
+            builder
+                .Property(b => b.TimeFrameID)
+                .IsRequired();
+            builder
+                .Property(b => b.EventIDs)
+                .IsRequired();
+            builder
+                .Property(b => b.League)
+                .IsRequired();
+            builder
+                .Property(b => b.TimeFrameIndex)
+                .IsRequired();
+            builder
+                .Property(b => b.PlayerData)
+                .IsRequired();
+            builder.ToTable("TimeframeTable");
+        }
+    }
+
     public class EventEntityTypeConfiguration : IEntityTypeConfiguration<DatabaseEventModel>
     {
         public void Configure(EntityTypeBuilder<DatabaseEventModel> builder)

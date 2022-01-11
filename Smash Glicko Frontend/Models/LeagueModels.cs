@@ -72,7 +72,7 @@ namespace Smash_Glicko_Frontend.Models
 
         public TimeFrameModel(List<uint> IniEventIds, Dictionary<uint, PlayerModel> IniPlayers, uint IniTimeframeIndex)
         {
-            Dictionary<uint, PlayerModel> AllPlayers = IniPlayers;
+            Players = IniPlayers;
             EventIds = IniEventIds;
             TimeframeIndex = IniTimeframeIndex;
         }
@@ -115,17 +115,32 @@ namespace Smash_Glicko_Frontend.Models
             }
         }
 
+        public void AddPlayersFromEvent(EventModel Event)
+        {
+            HashSet<uint> PlayerIDs = new HashSet<uint>();
+            foreach(uint PlayerID in Event.Player1ID)
+            {
+                PlayerIDs.Add(PlayerID);
+            }
+            foreach (uint PlayerID in Event.Player2ID)
+            {
+                PlayerIDs.Add(PlayerID);
+            }
+            AddPlayers(PlayerIDs.ToList());
+        }
+
+        //Needs optimizing but it works for now
         public byte[] PlayerModelsToBytes()
         {
             List<byte> bytes = new List<byte>();
             foreach (KeyValuePair<uint, PlayerModel> Player in Players)
             {
-                bytes = (List<byte>)bytes.Concat(Player.Value.ToBytes());
+                bytes = bytes.Concat(Player.Value.ToBytes()).ToList();
             }
             return bytes.ToArray();
         }
 
-        public Dictionary<uint, PlayerModel> BytesToPlayerModels(byte[] bytes) 
+        public static Dictionary<uint, PlayerModel> BytesToPlayerModels(byte[] bytes) 
         {
             Dictionary<uint, PlayerModel> Output = new Dictionary<uint, PlayerModel>();
             int PlayerModelSize = PlayerModel.SizeOfBytes();
@@ -138,6 +153,11 @@ namespace Smash_Glicko_Frontend.Models
                 Output.Add(NewPlayer.Id, NewPlayer);
             }
             return Output;
+        }
+
+        public DatabaseTimeframeModel ToDatabaseModel()
+        {
+            return new DatabaseTimeframeModel() { EventIDs = ByteConvertion.UintToByte(EventIds.ToArray()), League = LeagueID, PlayerData = PlayerModelsToBytes(), TimeFrameID = (uint)TimeframeId, TimeFrameIndex = TimeframeIndex };
         }
     }
 

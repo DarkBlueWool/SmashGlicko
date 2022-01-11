@@ -29,5 +29,12 @@ namespace Smash_Glicko_Frontend.Controllers
             EventModel model = await Shortcuts.GQLInteractor.GetEventData("tournament/4o4-smash-night-35/event/singles", ApiToken);
             return Ok(model.Player1Wins.Count + " " + model.PlayerCount);
         }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult Timeframe()
+        {
+            return View();
+        }
     }
 }

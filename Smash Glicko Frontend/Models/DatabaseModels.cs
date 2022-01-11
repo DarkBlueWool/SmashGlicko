@@ -57,6 +57,11 @@ namespace Smash_Glicko_Frontend.Models
         public byte[] EventIDs { get; set; }
 
         public byte[] PlayerData { get; set; }
+
+        public TimeFrameModel ToStandardModel()
+        {
+            return new TimeFrameModel(ByteConvertion.ByteToUint(EventIDs).ToList(), TimeFrameModel.BytesToPlayerModels(PlayerData), TimeFrameIndex) { LeagueID = League, TimeframeId = TimeFrameID };
+        }
     }
 
     public class DatabaseEventModel
@@ -143,10 +148,6 @@ namespace Smash_Glicko_Frontend.Shortcuts
             float[] Output = new float[input.Length / sizeof(float)];
             System.Buffer.BlockCopy(input, 0, Output, 0, input.Length);
             return Output;
-        }
-        public static byte[] PlayerModelToByte(PlayerModel[] input)
-        {
-
         }
     }
 }

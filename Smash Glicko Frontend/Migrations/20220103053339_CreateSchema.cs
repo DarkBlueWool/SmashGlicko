@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Smash_Glicko_Frontend.Migrations
 {
-    public partial class CreateSchemas : Migration
+    public partial class CreateSchema : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -54,8 +54,8 @@ namespace Smash_Glicko_Frontend.Migrations
                 {
                     EventID = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SmashGGEventID = table.Column<long>(type: "bigint", nullable: false),
                     EventSlug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    SmashGGEventID = table.Column<long>(type: "bigint", nullable: false),
                     PlayerCount = table.Column<long>(type: "bigint", nullable: false),
                     Player1ID = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
                     Player2ID = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
@@ -83,6 +83,22 @@ namespace Smash_Glicko_Frontend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_LeaguesTable", x => x.LeagueId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TimeframeTable",
+                columns: table => new
+                {
+                    TimeFrameID = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TimeFrameIndex = table.Column<long>(type: "bigint", nullable: false),
+                    League = table.Column<long>(type: "bigint", nullable: false),
+                    EventIDs = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    PlayerData = table.Column<byte[]>(type: "varbinary(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TimeframeTable", x => x.TimeFrameID);
                 });
 
             migrationBuilder.CreateTable(
@@ -253,6 +269,9 @@ namespace Smash_Glicko_Frontend.Migrations
 
             migrationBuilder.DropTable(
                 name: "LeaguesTable");
+
+            migrationBuilder.DropTable(
+                name: "TimeframeTable");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
