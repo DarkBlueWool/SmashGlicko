@@ -1,5 +1,5 @@
 # Overview
-An implementation of the Glicko rating system to be used for smash local scenes, or any similiarly scored tournament ran on smash.gg. No other websites are currently planned to be added to input data, but such a possibility isn't out of the question. It has a web frontend for ease of use by the end user, ~~and because I didn't realize how much of a pain that is to do.~~ Currently on hiatus due to college and other projects taking up more of my time.
+An implementation of the Glicko rating system to be used for smash local scenes, or any similiarly scored tournament ran on smash.gg. No other websites are currently planned to be added to input data, but such a possibility isn't out of the question. It has a web frontend for ease of use by the end user, ~~and because I didn't realize how much of a pain that is to do.~~ **Currently on hiatus due to college and other projects taking up more of my time.**
 
 # Glicko
 Glicko-2 is a skill rating system that accounts for player volatility. Smash is extremely volatile, upsets are common, and a bad day can lead to bad results. Being able to account for that compared to the more plain systems like ELO is imperative. Furthermore the system accounts for the greater potential volatility of players who take an extended break from smash.
